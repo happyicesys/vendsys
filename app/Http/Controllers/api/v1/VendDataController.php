@@ -108,7 +108,7 @@ class VendDataController extends Controller
         VendMachineTransaction::create([
             'code' => $this->getVendMachineTransactionIncrement(),
             'order_id' => $request->ORDRID,
-            'transaction_datetime' => Carbon::parse($request->TIME),
+            'transaction_datetime' => $request->TIME,
             'amount' => $request->Price,
             'payment_method_id' => isset($paymentMethod) ? $paymentMethod->id : 0,
             'vend_machine_id' => $vendMachine->id,
