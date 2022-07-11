@@ -46,9 +46,9 @@ class VendDataController extends Controller
                         $vendMachine->is_sensor_normal = $isSensorNormal;
                     }
 
-                    if($LstSltE = $request->LstSltE) {
-                        $this->syncVendMachineChannelErrorLog($vendMachine, $LstSltE/1000, $LstSltE%1000);
-                    }
+                    // if($LstSltE = $request->LstSltE) {
+                    //     $this->syncVendMachineChannelErrorLog($vendMachine, $LstSltE/1000, $LstSltE%1000);
+                    // }
 
                     $vendMachine->save();
 
