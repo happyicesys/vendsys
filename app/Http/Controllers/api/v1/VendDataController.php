@@ -125,7 +125,7 @@ class VendDataController extends Controller
     {
         if($channels = $request->channels) {
             foreach($channels as $channel) {
-                if($channel['capacity'] != 0) {
+                if($channel['capacity'] > 0) {
                     VendMachineChannel::updateOrCreate([
                         'vend_machine_id' => $vendMachine->id,
                         'code' => $channel['channel_code'],
