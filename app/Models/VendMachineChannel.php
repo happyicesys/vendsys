@@ -14,6 +14,7 @@ class VendMachineChannel extends Model
         'qty',
         'capacity',
         'amount',
+        'is_active',
         'vend_machine_id',
     ];
 

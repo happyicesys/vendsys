@@ -135,6 +135,14 @@ class VendDataController extends Controller
                         'amount' => $channel['amount'],
                     ]);
                     $this->syncVendMachineChannelErrorLog($vendMachine, $channel['channel_code'], $channel['error_code']);
+                }else {
+                    $zeroCapacityChannel = VendMachineChannel::where('vend_machine_id', $vendMachine->id)
+                                                            ->where('code', $channel['channel_code'])
+                                                            ->first();
+                    if($zeroCapacityChannel) {
+                        $zeroCapacityChannel->is_active = false;
+                        $zeroCapacityChannel->save();
+                    }
                 }
             }
         }
