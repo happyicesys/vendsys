@@ -135,7 +135,7 @@ class VendDataController extends Controller
                         'amount' => $channel['amount'],
                     ]);
                     $this->syncVendMachineChannelErrorLog($vendMachine, $channel['channel_code'], $channel['error_code']);
-                }else {
+                }else if($channel['capacity'] == 0) {
                     $zeroCapacityChannel = VendMachineChannel::where('vend_machine_id', $vendMachine->id)
                                                             ->where('code', $channel['channel_code'])
                                                             ->first();
