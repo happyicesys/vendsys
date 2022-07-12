@@ -162,17 +162,17 @@ class VendDataController extends Controller
     private function syncVendMachineChannelErrorLog(VendMachine $vendMachine, $vendMachineChannelCode, $vendMachineChannelErrorCode)
     {
         $vendMachineChannel = VendMachineChannel::where('vend_machine_id', $vendMachine->id)->where('code', $vendMachineChannelCode)->first();
-        if(!$vendMachineChannel) {
+        $vendMachineChannelError = VendMachineChannelError::where('code', $vendMachineChannelErrorCode)->first();
+
+        if(!$vendMachineChannel and $vendMachineChannelError) {
             $vendMachineChannel = VendMachineChannel::updateOrCreate([
                 'vend_machine_id' => $vendMachine->id,
                 'code' => $vendMachineChannelCode,
             ]);
         }
-        $vendMachineChannelError = VendMachineChannelError::where('code', $vendMachineChannelErrorCode)->first();
-        // dd($vendMachineChannelCode, $vendMachineChannelErrorCode, $vendMachineChannel->id, $vendMachineChannelError->id);
 
         if($vendMachineChannel and $vendMachineChannelError and $vendMachineChannelError->code != 0) {
-            // dd($vendMachineChannelCode, $vendMachineChannelErrorCode, $vendMachineChannel->id, $vendMachineChannelError->id, '111');
+
             VendMachineChannelErrorLog::updateOrCreate([
                 'vend_machine_channel_id' => $vendMachineChannel->id,
             ],[
