@@ -161,29 +161,29 @@ class VendDataController extends Controller
 
     private function syncVendMachineChannelErrorLog(VendMachine $vendMachine, $vendMachineChannelCode, $vendMachineChannelErrorCode)
     {
-        $vendMachineChannel = VendMachineChannel::where('vend_machine_id', $vendMachine->id)->where('code', $vendMachineChannelCode)->first();
         $vendMachineChannelError = VendMachineChannelError::where('code', $vendMachineChannelErrorCode)->first();
 
-        if(!$vendMachineChannel and $vendMachineChannelError) {
-            $vendMachineChannel = VendMachineChannel::updateOrCreate([
-                'vend_machine_id' => $vendMachine->id,
-                'code' => $vendMachineChannelCode,
-            ]);
-        }
+        if($vendMachineChannelError) {
+            if($vendMachineChannelError->code > 0) {
+                $vendMachineChannel = VendMachineChannel::firstOrCreate([
+                    'vend_machine_id' => $vendMachine->id,
+                    'code' => $vendMachineChannelCode,
+                ]);
 
-        if($vendMachineChannel and $vendMachineChannelError and $vendMachineChannelError->code != 0) {
+                VendMachineChannelErrorLog::updateOrCreate([
+                    'vend_machine_channel_id' => $vendMachineChannel->id,
+                ],[
+                    'vend_machine_channel_error_id' => $vendMachineChannelError->id
+                ]);
+            }else {
+                $recoveredChannel = VendMachineChannel::where('vend_machine_id', $vendMachine->id)->where('code', $vendMachineChannelCode)->first();
+                if($recoveredChannel) {
+                    $recoveredVendMachineChannelErrorLog = VendMachineChannelErrorLog::where('vend_machine_channel_id', $recoveredChannel->id)->first();
+                    if($recoveredVendMachineChannelErrorLog) {
+                        $recoveredVendMachineChannelErrorLog->delete();
+                    }
+                }
 
-            VendMachineChannelErrorLog::updateOrCreate([
-                'vend_machine_channel_id' => $vendMachineChannel->id,
-            ],[
-                'vend_machine_channel_error_id' => $vendMachineChannelError->id
-            ]);
-        }elseif($vendMachineChannel and $vendMachineChannelError and $vendMachineChannelError->code == 0) {
-            // dd($vendMachineChannelCode, $vendMachineChannelErrorCode, $vendMachineChannel->id, $vendMachineChannelError->id, '222');
-            $vendMachineChannelErrorLog = VendMachineChannelErrorLog::where('vend_machine_channel_id', $vendMachineChannel->id)->first();
-
-            if($vendMachineChannelErrorLog) {
-                $vendMachineChannelErrorLog->delete();
             }
         }
     }
